@@ -385,12 +385,9 @@ def home():
 
 
 
-# Run Flask app
-# if __name__ == "__main__":
-#     app.run(host="0.0.0.0", port=8000)
-
 
 if __name__ == "__main__":
+    port = int(os.environ.get("PORT", 8080))  # Railway uses 8080 in your case
+    print(f"🚀 Flask running on port {port}")
+    app.run(host="0.0.0.0", port=port)
 
-
-    app.run(host="0.0.0.0", port=8080)
