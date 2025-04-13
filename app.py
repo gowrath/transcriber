@@ -305,6 +305,7 @@ def search_youtube_videos(query="msnbc trump musk"):
 
 @app.route('/', methods=['GET', 'POST'])
 def home():
+
     summaries_text = ""
     action_items_text = None
     videos_data = []
@@ -386,3 +387,8 @@ def home():
 # if __name__ == "__main__":
 #     app.run(host="0.0.0.0", port=8000)
 
+
+if __name__ == "__main__":
+    port = int(os.environ.get("PORT", 8080))
+    print(f"Running locally on port {port}")
+    app.run(host="0.0.0.0", port=port)
