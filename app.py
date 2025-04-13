@@ -1,7 +1,7 @@
 from flask import Flask, request, jsonify, render_template_string
-from pyngrok import ngrok
+
 from youtube_transcript_api import YouTubeTranscriptApi, TranscriptsDisabled
-# from youtube_transcript_api.proxies import WebshareProxyConfig
+
 from youtubesearchpython import VideosSearch
 import google.generativeai as genai
 import webbrowser
@@ -373,11 +373,6 @@ def home():
 # Connect to ngrok with reserved username
 
 
-
-public_url = ngrok.connect(5000, domain="sole-adapting-unicorn.ngrok-free.app").public_url
-print(f"Public URL: {public_url}")
-
-webbrowser.open(public_url)
 
 # Run Flask app
 if __name__ == "__main__":
