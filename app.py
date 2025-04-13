@@ -53,6 +53,14 @@ YOUTUBE_API_KEY = os.getenv("YOUTUBE_API_KEY")
 
 app = Flask(__name__)
 
+
+if __name__ == "__main__":
+    port = int(os.environ.get("PORT", 5000))
+    print(f"Starting Flask on port {port}")
+    app.run(host="0.0.0.0", port=port)
+
+
+
 HTML_TEMPLATE = """
 <!DOCTYPE html>
 <html lang="en">
@@ -375,6 +383,6 @@ def home():
 
 
 # Run Flask app
-if __name__ == "__main__":
-    app.run(host="0.0.0.0", port=8000)
+# if __name__ == "__main__":
+#     app.run(host="0.0.0.0", port=8000)
 
