@@ -317,27 +317,46 @@ def home():
     if request.method == "GET":
         for video in videos:
             try:
-                video_id = video["link"].split("watch?v=")[-1].split("&")[0]
+                raw_link = video.get("link", "")
+                print(f"🔍 Processing video: {raw_link}")
+
+                # Support both full URLs and raw video IDs
+                if "watch?v=" in raw_link:
+                    video_id = raw_link.split("watch?v=")[-1].split("&")[0]
+                elif "youtu.be/" in raw_link:
+                    video_id = raw_link.split("youtu.be/")[-1].split("?")[0]
+                else:
+                    video_id = raw_link  # assume it's just a video ID
+
+                print(f"🎬 Extracted video ID: {video_id}")
+
                 if video_id in cache:
                     summary = cache[video_id]
                 else:
-
-
-                    # transcripts = YouTubeTranscriptApi.list_transcripts(video_id)
-                    # transcript_obj = transcripts.find_transcript(["en", "ko", "fr", "es", "zh", "zh-Hans", "zh-Hant", "ja"])
-                    # raw_transcript = transcript_obj.fetch()
-                    # transcript_text = clean_transcript(raw_transcript)
-                    # summary = generate_summary(transcript_text)
-
-
+                    # Safely try fetching transcript
+                    transcripts = YouTubeTranscriptApi.list_transcripts(video_id)
+                    transcript_obj = transcripts.find_transcript([
+                        "en", "ko", "fr", "es", "zh", "zh-Hans", "zh-Hant", "ja"
+                    ])
+                    raw_transcript = transcript_obj.fetch()
+                    transcript_text = clean_transcript(raw_transcript)
+                    summary = generate_summary(transcript_text)
                     cache[video_id] = summary
                     save_cache(cache)
+
                 summaries_text += summary + "\n\n"
                 videos_data.append({**video, "summary": summary})
+
             except TranscriptsDisabled:
+                print(f"⚠️ Transcripts disabled for {raw_link}")
                 videos_data.append({**video, "summary": None, "error": "Transcripts are disabled."})
+
             except Exception as e:
+                print(f"❌ Error processing {raw_link}: {e}")
                 videos_data.append({**video, "summary": None, "error": str(e)})
+
+
+
 
     elif request.method == "POST":
         action = request.form.get("action")
