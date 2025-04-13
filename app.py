@@ -51,6 +51,8 @@ print("✅ genai configured successfully")
 YOUTUBE_API_KEY = os.getenv("YOUTUBE_API_KEY")
 
 
+print("RAILWAY ENV PORT =", os.environ.get("PORT"))
+
 app = Flask(__name__)
 
 
