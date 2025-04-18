@@ -12,10 +12,23 @@ from datetime import datetime, timedelta
 from dotenv import load_dotenv
 
 
+
+
 import os
 from dotenv import load_dotenv
 
 import json
+
+
+# If using a proxy:
+proxy_url = os.getenv("YOUTUBE_PROXY")
+
+if proxy_url:
+    from youtube_transcript_api.proxies import WebshareProxyConfig
+    from youtube_transcript_api import YouTubeTranscriptApi
+
+    YouTubeTranscriptApi._proxy_config = WebshareProxyConfig(proxy_url)
+    print(f"🛡️ YouTube proxy configured: {proxy_url.split('@')[-1]}")
 
 CACHE_FILE = "summary_cache.json"
 
@@ -55,11 +68,6 @@ print("RAILWAY ENV PORT =", os.environ.get("PORT"))
 
 app = Flask(__name__)
 
-
-# if __name__ == "__main__":
-#     port = int(os.environ.get("PORT", 5000))
-#     print(f"Starting Flask on port {port}")
-#     app.run(host="0.0.0.0", port=port)
 
 
 
@@ -270,38 +278,38 @@ def generate_summary(text):
     except Exception as e:
         return f"Error generating summary: {e}"
 
-# def search_youtube_videos(query="msnbc trump musk"):
-#     now = datetime.utcnow()
-#     yesterday = now - timedelta(days=2)
-#     published_after = yesterday.isoformat("T") + "Z"
-#     url = "https://www.googleapis.com/youtube/v3/search"
-#     params = {
-#         "part": "snippet",
-#         "q": query,
-#         "type": "video",
-#         "order": "date",
-#         "publishedAfter": published_after,
-#         "maxResults": 5,
-#         "key": YOUTUBE_API_KEY
-#     }
-#     res = requests.get(url, params=params)
-#     res.raise_for_status()
-#     data = res.json()
-#     videos = []
-#     for item in data.get("items", []):
-#         video_id = item["id"]["videoId"]
-#         import html
-#         title = html.unescape(item["snippet"]["title"])
-#         link = f"https://www.youtube.com/watch?v={video_id}"
-#         videos.append({"title": title, "link": link})
-#     return videos
-
-
 def search_youtube_videos(query="msnbc trump musk"):
-    return [
-        {"title": "House Democrats Say Trump Must Fire Musk in 50 Days", "link": "Sm_tCsKNrag"},
-        {"title": "Peter Navarro Says Tariffs are the Only Defense", "link": "aeM8v_idbg0"},
-    ]
+    now = datetime.utcnow()
+    yesterday = now - timedelta(days=2)
+    published_after = yesterday.isoformat("T") + "Z"
+    url = "https://www.googleapis.com/youtube/v3/search"
+    params = {
+        "part": "snippet",
+        "q": query,
+        "type": "video",
+        "order": "date",
+        "publishedAfter": published_after,
+        "maxResults": 5,
+        "key": YOUTUBE_API_KEY
+    }
+    res = requests.get(url, params=params)
+    res.raise_for_status()
+    data = res.json()
+    videos = []
+    for item in data.get("items", []):
+        video_id = item["id"]["videoId"]
+        import html
+        title = html.unescape(item["snippet"]["title"])
+        link = f"https://www.youtube.com/watch?v={video_id}"
+        videos.append({"title": title, "link": link})
+    return videos
+
+
+# def search_youtube_videos(query="msnbc trump musk"):
+#     return [
+#         {"title": "House Democrats Say Trump Must Fire Musk in 50 Days", "link": "Sm_tCsKNrag"},
+#         {"title": "Peter Navarro Says Tariffs are the Only Defense", "link": "aeM8v_idbg0"},
+#     ]
 
 
 
